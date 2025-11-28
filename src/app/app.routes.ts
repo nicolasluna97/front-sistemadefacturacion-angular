@@ -3,24 +3,30 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './core/home/home';
 import { InventoryPages } from './modules/inventory/pages/inventory-pages';
 import { SalesComponent } from './modules/sales/pages/sales.component';
-import { historyRoutes } from './modules/history/history.route';
 import { NotFoundPage } from './modules/pages/not-found-page/not-found-page/not-found-page';
 
 export const routes: Routes = [
+
+ 
   {
     path: 'auth',
     loadChildren: () => import('./modules/auth/auth.routes').then(m => m.authRoutes)
   },
+
+  
   {
     path: '',
     component: HomeComponent,
-    canActivate: [authGuard]
+  
   },
+
   {
     path: 'home',
     redirectTo: '',
     pathMatch: 'full'
   },
+
+  
   {
     path: 'ventas',
     loadChildren: () => import('./modules/sales/sales.routes').then(m => m.salesRoutes),
@@ -41,6 +47,8 @@ export const routes: Routes = [
     loadChildren: () => import('./modules/statistics/statistics.route').then(m => m.StatisticsRoutes),
     canActivate: [authGuard]
   },
+
+ 
   {
     path: '**',
     component: NotFoundPage,

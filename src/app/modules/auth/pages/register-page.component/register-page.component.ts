@@ -16,7 +16,7 @@ import {
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
-import { AuthService } from '../../services/auth.service'; // ⬅️ OJO: ruta correcta
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register-page',
@@ -46,7 +46,6 @@ export class RegisterPageComponent {
   }>;
 
   constructor() {
-    // Construimos el form en el constructor para evitar “used before initialization”
     this.form = this.fb.group(
       {
         fullName: this.fb.control('', {
@@ -81,8 +80,6 @@ export class RegisterPageComponent {
   get confirmPassword() { return this.form.controls['confirmPassword'] as AbstractControl; }
   get terms() { return this.form.controls['terms'] as AbstractControl; }
 
-
-
   // Checklist en vivo para la contraseña
   get passChecks() {
     const v: string = (this.password.value as string) || '';
@@ -99,20 +96,39 @@ export class RegisterPageComponent {
 
   submit() {
     this.serverError = null;
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.loading = true;
 
     const { fullName, email, password } = this.form.getRawValue() as {
-      fullName: string; email: string; password: string; confirmPassword: string; terms: boolean;
+      fullName: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+      terms: boolean;
     };
 
     this.auth.register({ fullName, email, password })
-      .pipe(finalize(() => { this.loading = false; this.cdr.markForCheck(); }))
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        })
+      )
       .subscribe({
         next: (ok: boolean) => {
-          if (ok) this.router.navigateByUrl('/');  // entra logueado
-          else this.serverError = 'No se pudo registrar. Verificá los datos.';
+          if (ok) {
+            // 🔴 ANTES: this.router.navigateByUrl('/');
+            // ✅ AHORA: vamos a la pantalla de verificar email, pasando el email
+            this.router.navigate(['/auth/verify-email'], {
+              queryParams: { email },
+            });
+          } else {
+            this.serverError = 'No se pudo registrar. Verificá los datos.';
+          }
           this.cdr.markForCheck();
         },
         error: (err: any) => {
@@ -136,6 +152,6 @@ function passwordComplexityValidator(control: AbstractControl): ValidationErrors
   const hasUpper = /[A-Z]/.test(v);
   const hasLower = /[a-z]/.test(v);
   const hasNumber = /[0-9]/.test(v);
- 
+
   return (hasUpper && hasLower && hasNumber) ? null : { weakPassword: true };
 }

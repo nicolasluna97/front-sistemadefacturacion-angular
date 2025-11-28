@@ -1,0 +1,41 @@
+<div class="verify-container">
+  <div class="verify-card">
+
+    <h1 class="verify-title">Verificar Email</h1>
+    <p class="verify-subtitle">
+      Te enviamos un código de 6 dígitos a:  
+      <strong>{{ email }}</strong>
+    </p>
+
+    <div *ngIf="serverError" class="alert alert-danger">
+      {{ serverError }}
+    </div>
+
+    <div *ngIf="successMsg" class="alert alert-success">
+      {{ successMsg }}
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-group">
+        <label>Código de verificación</label>
+        <input
+          formControlName="code"
+          type="text"
+          maxlength="6"
+          class="form-input"
+          placeholder="000000"
+          [class.invalid]="form.controls.code.touched && form.controls.code.invalid"
+        />
+      </div>
+
+      <button class="verify-button" type="submit" [disabled]="loading || form.invalid">
+        {{ loading ? "Verificando..." : "Verificar Email" }}
+      </button>
+    </form>
+
+    <button class="resend-button" type="button" (click)="resend()" [disabled]="resendLoading">
+      {{ resendLoading ? "Enviando..." : "Reenviar Código" }}
+    </button>
+
+  </div>
+</div>
