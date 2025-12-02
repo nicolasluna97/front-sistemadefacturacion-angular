@@ -1,33 +1,153 @@
-<app-navbar></app-navbar>
-<app-sidenav></app-sidenav>
+<div class="inventory-wrapper">
 
-<div class="prueba-i">
-    <h2>Inventario</h2>
-</div>
+  <!-- Barra de botones -->
+  <div class="toolbar">
+    <button class="btn btn-add" (click)="onAddProduct()" [disabled]="loading">
+      + Agregar un producto
+    </button>
 
-<div class="prueba-i">
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Stock</th>
-                <th>Precio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngIf="products$ | async as products; else loading">
-                <tr *ngFor="let product of products">
-                    <td>{{ product.title }}</td>
-                    <td>{{ product.stock }}</td>
-                    <td>{{ product.price }}</td>
-                </tr>
+    <button class="btn btn-edit"
+            (click)="toggleEditMode()"
+            [disabled]="loading || deleteMode || products.length === 0">
+      {{ editMode ? 'Guardar cambios' : '🔄 Actualizar productos' }}
+    </button>
+
+    <button class="btn btn-delete"
+            (click)="onDeleteButton()"
+            [disabled]="loading || editMode || products.length === 0">
+      {{ deleteMode ? 'Confirmar eliminación' : 'Eliminar productos' }}
+    </button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-container" *ngIf="!loading; else loadingTpl">
+
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th *ngIf="deleteMode" class="col-select"></th>
+          <th>Nombre</th>
+          <th>Stock</th>
+          <th>Precio 1</th>
+          <th>Precio 2</th>
+          <th>Precio 3</th>
+          <th>Precio 4</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <!-- Sin productos -->
+        <tr *ngIf="products.length === 0">
+          <td [attr.colspan]="deleteMode ? 7 : 6" class="empty-cell">
+            Todavía no hay productos cargados.
+          </td>
+        </tr>
+
+        <!-- Con productos -->
+        <tr *ngFor="let p of (editMode ? editedProducts : products); let i = index">
+
+          <!-- Checkbox sólo en modo delete -->
+          <td *ngIf="deleteMode" class="col-select">
+            <input type="checkbox"
+                   [checked]="isSelected(p.id)"
+                   (change)="toggleSelected(p.id, $event.target.checked)" />
+          </td>
+
+          <!-- Nombre / title -->
+          <td>
+            <ng-container *ngIf="editMode; else nameRead">
+              <input type="text"
+                     [(ngModel)]="editedProducts[i].title"
+                     class="cell-input" />
             </ng-container>
-            
-            <ng-template #loading>
-                <tr>
-                    <td colspan="3">Cargando productos...</td>
-                </tr>
+            <ng-template #nameRead>
+              {{ p.title }}
             </ng-template>
-        </tbody>
-    </table>
+          </td>
+
+          <!-- Stock -->
+          <td>
+            <ng-container *ngIf="editMode; else stockRead">
+              <input type="number"
+                     min="0"
+                     [(ngModel)]="editedProducts[i].stock"
+                     class="cell-input number" />
+            </ng-container>
+            <ng-template #stockRead>
+              {{ p.stock }}
+            </ng-template>
+          </td>
+
+          <!-- Precio 1 -->
+          <td>
+            <ng-container *ngIf="editMode; else price1Read">
+              <input type="number"
+                     min="0"
+                     step="0.01"
+                     [(ngModel)]="editedProducts[i].price"
+                     class="cell-input number" />
+            </ng-container>
+            <ng-template #price1Read>
+              {{ p.price | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            </ng-template>
+          </td>
+
+          <!-- Precio 2 -->
+          <td>
+            <ng-container *ngIf="editMode; else price2Read">
+              <input type="number"
+                     min="0"
+                     step="0.01"
+                     [(ngModel)]="editedProducts[i].price2"
+                     class="cell-input number" />
+            </ng-container>
+            <ng-template #price2Read>
+              {{ p.price2 | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            </ng-template>
+          </td>
+
+          <!-- Precio 3 -->
+          <td>
+            <ng-container *ngIf="editMode; else price3Read">
+              <input type="number"
+                     min="0"
+                     step="0.01"
+                     [(ngModel)]="editedProducts[i].price3"
+                     class="cell-input number" />
+            </ng-container>
+            <ng-template #price3Read>
+              {{ p.price3 | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            </ng-template>
+          </td>
+
+          <!-- Precio 4 -->
+          <td>
+            <ng-container *ngIf="editMode; else price4Read">
+              <input type="number"
+                     min="0"
+                     step="0.01"
+                     [(ngModel)]="editedProducts[i].price4"
+                     class="cell-input number" />
+            </ng-container>
+            <ng-template #price4Read>
+              {{ p.price4 | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table> 
+
+    <!-- Botón para cancelar edición -->
+    <div class="edit-actions" *ngIf="editMode">
+      <button class="btn btn-cancel" (click)="cancelEdit()" [disabled]="loading">
+        Cancelar cambios
+      </button>
+    </div>
+
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading-text">Cargando inventario...</div>
+  </ng-template>
 </div>

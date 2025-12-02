@@ -1,40 +1,170 @@
+* {
+  margin: 0.2rem;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Contenedor igual que login/register */
 .verify-container {
-  min-height: 100vh; display:flex; justify-content:center; align-items:center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 10px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 10px;
 }
 
+/* Tarjeta un poco más grande */
 .verify-card {
-  width:100%; max-width: 380px; background: rgb(231,231,231);
-  border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  width: 100%;
+  max-width: 480px;              /* más ancha */
+  background: rgb(231, 231, 231);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
 }
 
+/* Títulos y textos */
 .verify-title {
-  text-align:center; font-size:1.4rem; font-weight:600; margin-bottom:10px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: var(--text-color);
 }
 
 .verify-subtitle {
-  text-align:center; color:#333; margin-bottom:15px; font-size:.95rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
 }
 
+/* Mensajes */
 .alert {
-  padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; font-size: .9rem;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin: 10px 0 14px 0;
+  font-size: .95rem;
 }
-.alert-danger { background: #fdecea; border: 1px solid #f5c6cb; }
-.alert-success { background: #e8f5e9; border: 1px solid #81c784; }
 
-.form-group { margin-bottom: 15px; }
+.alert-danger {
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background: #e6ffed;
+  border: 1px solid #34d399;
+}
+
+/* Formulario */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Input centrado y ancho completo */
 .form-input {
-  width: 100%; padding: 12px; border-radius: 8px;
-  border: 2px solid #ccc; font-size:1rem;
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fafafa;
+  transition: all .3s ease;
 }
-.form-input.invalid { border-color:#e55353; }
 
-.verify-button, .resend-button {
-  width:100%; padding:12px; margin-top:10px; border-radius:8px;
-  font-weight:600; cursor:pointer;
-  border:1px solid rgb(100,100,100);
-  background: var(--primary-color);
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, .1);
 }
-.verify-button:hover, .resend-button:hover {
+
+.form-input.invalid {
+  border-color: #e55353;
+  background: #fff5f5;
+}
+
+/* Botón principal (igual estilo login) */
+.verify-button {
+  background: var(--primary-color);
+  color: #000;
+  border: .1px solid rgb(97, 97, 97);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.verify-button:hover {
   background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(67, 97, 238, .3);
+}
+
+.verify-button[disabled] {
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+/* Botón de reenviar código */
+.resend-button {
+  margin-top: 10px;
+  background: transparent;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.resend-button:hover:not([disabled]) {
+  background: #f3f4f6;
+}
+
+.resend-button[disabled] {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .verify-card {
+    padding: 25px 20px;
+    margin: 10px;
+  }
+
+  .verify-title {
+    font-size: 1.4rem;
+  }
+}
+
+
+.resend-button.cooldown {
+  background: #e5e7eb;
+  color: #9ca3af;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.cooldown-text {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-align: center;
 }

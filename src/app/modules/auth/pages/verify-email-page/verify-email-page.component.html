@@ -3,7 +3,7 @@
 
     <h1 class="verify-title">Verificar Email</h1>
     <p class="verify-subtitle">
-      Te enviamos un código de 6 dígitos a:  
+      Te enviamos un código de 6 dígitos a:<br />
       <strong>{{ email }}</strong>
     </p>
 
@@ -33,12 +33,13 @@
       </button>
     </form>
 
-   <button
+    <button
       class="resend-button"
       type="button"
       (click)="resend()"
       [disabled]="resendLoading || resendCooldown > 0"
-      >
+      [class.cooldown]="resendCooldown > 0"
+    >
       <ng-container *ngIf="resendLoading">
         Enviando...
       </ng-container>
@@ -48,11 +49,12 @@
       </ng-container>
 
       <ng-container *ngIf="!resendLoading && resendCooldown > 0">
-        Reenviar Código ({{ resendCooldown }}s)
+        Reenviar Código ({{ resendCooldownLabel }})
       </ng-container>
     </button>
 
-
+    <p *ngIf="resendCooldown > 0" class="cooldown-text">
+    </p>
 
   </div>
 </div>

@@ -1,3 +1,6 @@
+// verify-email-page.component.ts
+
+// ...imports...
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -34,7 +37,7 @@ export class VerifyEmailPageComponent implements OnDestroy {
 
   email: string = '';
 
-  // 🔹 segundos de cooldown para el botón de reenvío
+  // segundos de cooldown para el botón de reenvío
   resendCooldown = 0;
   private resendTimerId: any = null;
 
@@ -42,14 +45,19 @@ export class VerifyEmailPageComponent implements OnDestroy {
     code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
   });
 
-  constructor() {
-    const emailParam = this.route.snapshot.queryParamMap.get('email');
-    if (!emailParam) {
-      this.serverError = 'No se recibió el email.';
-    } else {
-      this.email = emailParam;
+ constructor() {
+  const emailParam = this.route.snapshot.queryParamMap.get('email');
+
+  if (!emailParam) {
+    this.serverError = 'No se recibió el email.';
+  } else {
+    this.email = emailParam;
+
+    // 🔹 APENAS LLEGAMOS A ESTA PANTALLA, ARRANCAMOS EL COOLDOWN
+    this.startCooldown(30);
     }
   }
+
 
   ngOnDestroy(): void {
     if (this.resendTimerId) {
@@ -71,6 +79,14 @@ export class VerifyEmailPageComponent implements OnDestroy {
       }
       this.cdr.markForCheck();
     }, 1000);
+  }
+
+  // 🔹 NUEVO: etiqueta formateada mm:ss para mostrar en la UI
+  get resendCooldownLabel(): string {
+    if (this.resendCooldown <= 0) return '';
+    const minutes = Math.floor(this.resendCooldown / 60);
+    const seconds = this.resendCooldown % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   submit() {
@@ -128,7 +144,7 @@ export class VerifyEmailPageComponent implements OnDestroy {
 
         if (ok) {
           this.successMsg = 'Se envió un nuevo código a tu email.';
-          // 🔹 arrancamos el cooldown de 30s
+          // arrancamos el cooldown de 30s
           this.startCooldown(30);
         } else {
           this.serverError = 'No se pudo reenviar el código.';
@@ -141,8 +157,6 @@ export class VerifyEmailPageComponent implements OnDestroy {
         const msg = err?.error?.message || 'No se pudo reenviar el código.';
         this.serverError = msg;
 
-        // Si el backend dice que hay que esperar 30s, igual estamos protegidos. 
-        // Si dice "máximo reenvíos en 24 horas", simplemente mostramos el error.
         this.cdr.markForCheck();
       }
     });
