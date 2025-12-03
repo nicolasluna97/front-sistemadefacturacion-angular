@@ -1,21 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
 
-import {
-  ProductsService,
-  Product
-} from '../../products/services/products.service';
+import { ProductsService, Product } from '../../products/services/products.service';
+import { Navbar } from '../../../core/navbar/navbar';
+import { Sidenav } from '../../../core/sidenav/sidenav';
+
 @Component({
   selector: 'app-inventory-pages',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule, // 👈 necesario para [(ngModel)]
-  ],
+  imports: [CommonModule, FormsModule, Navbar, Sidenav],
   templateUrl: './inventory-pages.html',
-  styleUrls: ['./inventory-pages.css'],
+  styleUrls: ['./inventory-pages.css']
 })
 export class InventoryPages implements OnInit {
 
@@ -28,113 +24,120 @@ export class InventoryPages implements OnInit {
 
   selectedIds = new Set<string>();
 
+  // 🔹 NUEVO: estado del formulario para agregar
+  showAddForm = false;
+  newProduct = {
+    title: '',
+    stock: 0,
+    price: 0,
+    price2: 0,
+    price3: 0,
+    price4: 0
+  };
+
   constructor(private productsSvc: ProductsService) {}
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.load();
   }
 
-  // ===== Cargar productos =====
-  loadProducts(): void {
+  // --------- CARGA ---------
+  load() {
     this.loading = true;
     this.productsSvc.getProducts().subscribe({
-      next: (items: Product[]) => {
-        this.products = items;
+      next: (data) => {
+        this.products = data;
+        this.editedProducts = JSON.parse(JSON.stringify(data));
         this.loading = false;
       },
       error: () => {
         this.loading = false;
-        alert('No se pudo cargar el inventario.');
+        alert('Error al cargar el inventario.');
       }
     });
   }
 
-  // ===== Agregar producto =====
-  onAddProduct(): void {
-    const title = prompt('Nombre del nuevo producto:');
-    if (!title || !title.trim()) return;
-
-    const dto = {
-      title: title.trim(),
+  // --------- FORMULARIO AGREGAR ---------
+  openAddForm() {
+    this.showAddForm = true;
+    this.newProduct = {
+      title: '',
       stock: 0,
       price: 0,
       price2: 0,
       price3: 0,
-      price4: 0,
+      price4: 0
     };
+  }
+
+  closeAddForm() {
+    this.showAddForm = false;
+  }
+
+  saveNewProduct() {
+    const title = this.newProduct.title.trim();
+    if (!title) {
+      alert('El nombre del producto es obligatorio.');
+      return;
+    }
 
     this.loading = true;
-    this.productsSvc.createProduct(dto).subscribe({
-      next: (created: Product) => {
-        this.products = [...this.products, created];
+
+    this.productsSvc.createProduct(this.newProduct).subscribe({
+      next: (product) => {
         this.loading = false;
+        this.showAddForm = false;
+        this.products.push(product);
+        this.editedProducts = JSON.parse(JSON.stringify(this.products));
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error creando producto', err);
         this.loading = false;
         alert('No se pudo crear el producto.');
       }
     });
   }
 
-  // ===== Modo edición =====
-  toggleEditMode(): void {
+  // --------- EDITAR ---------
+  toggleEditMode() {
     if (!this.editMode) {
-      this.editedProducts = this.products.map(p => ({ ...p }));
+      this.editedProducts = JSON.parse(JSON.stringify(this.products));
       this.editMode = true;
       return;
     }
 
-    this.saveEdits();
-  }
-
-  private saveEdits(): void {
-    if (!this.editedProducts.length) {
-      this.editMode = false;
-      return;
-    }
-
     this.loading = true;
-
-    const updateCalls = this.editedProducts.map(p =>
+    const updates = this.editedProducts.map(p =>
       this.productsSvc.updateProduct(p.id, {
         title: p.title,
-        stock: p.stock ?? 0,
-        price: p.price ?? 0,
-        price2: p.price2 ?? 0,
-        price3: p.price3 ?? 0,
-        price4: p.price4 ?? 0,
+        stock: p.stock,
+        price: p.price,
+        price2: p.price2,
+        price3: p.price3,
+        price4: p.price4
       })
     );
 
-    forkJoin(updateCalls).subscribe({
-      next: (updated: Product[]) => {
-        this.products = updated;
+    // guardado “rápido”, si algo falla recargamos
+    Promise.all(updates.map(o => o.toPromise()))
+      .then(() => {
         this.editMode = false;
+        this.load();
+      })
+      .catch(err => {
+        console.error(err);
         this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        alert('No se pudieron guardar los cambios.');
-      }
-    });
+        alert('Error al guardar cambios.');
+      });
   }
 
-  cancelEdit(): void {
+  cancelEdit() {
     this.editMode = false;
-    this.editedProducts = [];
+    this.editedProducts = JSON.parse(JSON.stringify(this.products));
   }
 
-  // ===== Selección para eliminar =====
-  isSelected(id: string): boolean {
-    return this.selectedIds.has(id);
-  }
-
-  toggleSelected(id: string, checked: boolean): void {
-    if (checked) this.selectedIds.add(id);
-    else this.selectedIds.delete(id);
-  }
-
-  onDeleteButton(): void {
+  // --------- ELIMINAR ---------
+  onDeleteButton() {
     if (!this.deleteMode) {
       this.deleteMode = true;
       this.selectedIds.clear();
@@ -146,26 +149,36 @@ export class InventoryPages implements OnInit {
       return;
     }
 
-    const confirmDelete = confirm(
-      `¿Seguro que querés eliminar ${this.selectedIds.size} producto(s)?`
-    );
-    if (!confirmDelete) return;
+    const count = this.selectedIds.size;
+    const msg = count === 1
+      ? '¿Seguro que deseas eliminar el producto seleccionado?'
+      : `¿Seguro que deseas eliminar ${count} productos?`;
+
+    if (!confirm(msg)) return;
 
     this.loading = true;
     const ids = Array.from(this.selectedIds);
-    const deleteCalls = ids.map(id => this.productsSvc.deleteProduct(id));
 
-    forkJoin(deleteCalls).subscribe({
-      next: () => {
-        this.products = this.products.filter(p => !this.selectedIds.has(p.id));
-        this.selectedIds.clear();
+    Promise.all(ids.map(id => this.productsSvc.deleteProduct(id).toPromise()))
+      .then(() => {
+        this.loading = false;
         this.deleteMode = false;
+        this.selectedIds.clear();
+        this.load();
+      })
+      .catch(err => {
+        console.error(err);
         this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        alert('No se pudieron eliminar los productos seleccionados.');
-      }
-    });
+        alert('Error al eliminar productos.');
+      });
+  }
+
+  isSelected(id: string): boolean {
+    return this.selectedIds.has(id);
+  }
+
+  toggleSelected(id: string, checked: boolean) {
+    if (checked) this.selectedIds.add(id);
+    else this.selectedIds.delete(id);
   }
 }

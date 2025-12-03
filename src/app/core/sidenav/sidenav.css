@@ -1,22 +1,25 @@
   .sidenav-container {
-    font-family: Arial;
-    background-color: #fbfbfb;
-    width: 200px;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    transition: width 0.3s ease;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); 
-    margin: 65px 5px 5px 5px;
+  font-family: Arial;
+  background-color: #fbfbfb;
+  width: 200px;                
+  height: calc(100vh - 50px);  
+  position: fixed;
+  left: 0;
+  top: 50px;                   
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  margin: 0;                    
+  transition: width 0.3s ease;
   
   @media (max-width: 768px) {
-    width: 150px;
-      .btn-text {
-      display: none; 
-      }
+    .sidenav-container {
+      width: 150px;
     }
   } 
+  
+  .sidenav-container .btn-text {
+    display: none;
+  }
+  }
   
   .button-section-1{
     margin-top: 40px;
