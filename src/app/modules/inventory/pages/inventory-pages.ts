@@ -22,10 +22,17 @@ export class InventoryPages implements OnInit {
   editMode = false;
   deleteMode = false;
 
+  // selección para ELIMINAR
   selectedIds = new Set<string>();
+  // selección para EDITAR
+  editSelectedIds = new Set<string>();
 
-  // 🔹 Formulario para agregar (notá que uso `any` para simplificar los null)
+  // -------- MODALES --------
   showAddForm = false;
+  showConfirmUpdate = false;
+  showConfirmDelete = false;
+
+  // -------- NUEVO PRODUCTO --------
   newProduct: any = {
     title: '',
     stock: null,
@@ -35,7 +42,6 @@ export class InventoryPages implements OnInit {
     price4: null
   };
 
-  // 🔹 Errores para el modal de "Agregar producto"
   newProductErrors = {
     title: '',
     stock: '',
@@ -45,7 +51,7 @@ export class InventoryPages implements OnInit {
     price4: ''
   };
 
-  // 🔹 Errores por fila al editar (key = id del producto)
+  // errores por fila al editar
   editedErrors: {
     [id: string]: {
       title?: string;
@@ -72,6 +78,8 @@ export class InventoryPages implements OnInit {
         this.editedProducts = JSON.parse(JSON.stringify(data));
         this.loading = false;
         this.editedErrors = {};
+        this.selectedIds.clear();
+        this.editSelectedIds.clear();
       },
       error: () => {
         this.loading = false;
@@ -80,11 +88,11 @@ export class InventoryPages implements OnInit {
     });
   }
 
-  // ========= VALIDACIONES COMUNES =========
+  // ========= HELPERS =========
 
   private normalizeNumber(value: any): number | 'invalid' {
     if (value === null || value === undefined || value === '') {
-      return 0; // campo vacío => 0
+      return 0;
     }
     const n = Number(value);
     if (isNaN(n) || n < 0) {
@@ -93,11 +101,10 @@ export class InventoryPages implements OnInit {
     return n;
   }
 
-  // --------- VALIDAR NUEVO PRODUCTO (MODAL) ---------
+  // --------- VALIDAR NUEVO PRODUCTO ---------
   private validateNewProduct(): boolean {
     let valid = true;
 
-    // limpiar errores
     this.newProductErrors = {
       title: '',
       stock: '',
@@ -107,7 +114,6 @@ export class InventoryPages implements OnInit {
       price4: ''
     };
 
-    // título
     const title = (this.newProduct.title || '').trim();
     if (!title) {
       this.newProductErrors.title = 'Se necesita que el producto tenga un título';
@@ -116,7 +122,6 @@ export class InventoryPages implements OnInit {
       this.newProduct.title = title;
     }
 
-    // helper interno
     const checkField = (field: keyof typeof this.newProductErrors) => {
       const normalized = this.normalizeNumber(this.newProduct[field]);
       if (normalized === 'invalid') {
@@ -136,15 +141,18 @@ export class InventoryPages implements OnInit {
     return valid;
   }
 
-  // --------- VALIDAR PRODUCTOS EDITADOS (TABLA) ---------
+  // --------- VALIDAR EDITADOS (solo filas seleccionadas) ---------
   private validateEditedProducts(): boolean {
     let valid = true;
     this.editedErrors = {};
 
+    const idsSelected = new Set(this.editSelectedIds);
+
     for (const p of this.editedProducts) {
+      if (!idsSelected.has(p.id)) continue; // solo los seleccionados
+
       const rowErr: any = {};
 
-      // título
       const title = (p.title || '').trim();
       if (!title) {
         rowErr.title = 'Se necesita que el producto tenga un título';
@@ -178,10 +186,10 @@ export class InventoryPages implements OnInit {
     return valid;
   }
 
-  // --------- FORMULARIO AGREGAR ---------
+  // ========= FORMULARIO AGREGAR =========
+
   openAddForm() {
     this.showAddForm = true;
-    // campos numéricos vacíos para no arrancar en "0" visualmente
     this.newProduct = {
       title: '',
       stock: null,
@@ -205,11 +213,7 @@ export class InventoryPages implements OnInit {
   }
 
   saveNewProduct() {
-    // 1️⃣ Validar antes de guardar
-    if (!this.validateNewProduct()) {
-      // si hay errores, se muestran en el modal y no se llama al backend
-      return;
-    }
+    if (!this.validateNewProduct()) return;
 
     this.loading = true;
 
@@ -229,55 +233,90 @@ export class InventoryPages implements OnInit {
     });
   }
 
-  // --------- EDITAR ---------
-  toggleEditMode() {
-    // entrar a modo edición
+  // ========= EDITAR =========
+
+  onEditButton() {
+    // entrar en modo edición
     if (!this.editMode) {
       this.editedProducts = JSON.parse(JSON.stringify(this.products));
       this.editedErrors = {};
+      this.editSelectedIds.clear();
       this.editMode = true;
       return;
     }
 
-    // ya estamos en editMode → queremos guardar
-    // 1️⃣ validamos todos los productos
+    // ya estamos en editMode → usuario clicó "Guardar cambios"
+    if (this.editSelectedIds.size === 0) {
+      // si no hay nada seleccionado, salimos sin hacer nada
+      this.editMode = false;
+      this.editedProducts = JSON.parse(JSON.stringify(this.products));
+      this.editedErrors = {};
+      return;
+    }
+
+    // abrimos modal de confirmación
+    this.showConfirmUpdate = true;
+  }
+
+  isEditSelected(id: string): boolean {
+    return this.editSelectedIds.has(id);
+  }
+
+  toggleEditSelected(id: string, checked: boolean) {
+    if (checked) this.editSelectedIds.add(id);
+    else this.editSelectedIds.delete(id);
+  }
+
+  async confirmUpdate() {
+    this.showConfirmUpdate = false;
+
     if (!this.validateEditedProducts()) {
-      // si hay errores, NO guardamos ni llamamos backend
-      // los errores quedan visibles en la tabla
+      // si hay errores, se pintan en la tabla y NO llama al backend
       return;
     }
 
     this.loading = true;
-    const updates = this.editedProducts.map(p =>
-      this.productsSvc.updateProduct(p.id, {
-        title: p.title,
-        stock: p.stock,
-        price: p.price,
-        price2: p.price2,
-        price3: p.price3,
-        price4: p.price4
-      })
-    );
+    const idsToUpdate = new Set(this.editSelectedIds);
+    let errors = 0;
 
-    Promise.all(updates.map(o => o.toPromise()))
-      .then(() => {
-        this.editMode = false;
-        this.load();
-      })
-      .catch(err => {
-        console.error(err);
-        this.loading = false;
-        alert('Error al guardar cambios.');
-      });
+    for (const p of this.editedProducts) {
+      if (!idsToUpdate.has(p.id)) continue;
+
+      try {
+        await this.productsSvc.updateProduct(p.id, {
+          title: p.title,
+          stock: p.stock,
+          price: p.price,
+          price2: p.price2,
+          price3: p.price3,
+          price4: p.price4
+        }).toPromise();
+      } catch (e) {
+        console.error(e);
+        errors++;
+      }
+    }
+
+    this.loading = false;
+
+    if (errors > 0) {
+      alert('Error al guardar algunos cambios.');
+    }
+
+    this.editMode = false;
+    this.editSelectedIds.clear();
+    this.load();
   }
 
   cancelEdit() {
     this.editMode = false;
     this.editedProducts = JSON.parse(JSON.stringify(this.products));
     this.editedErrors = {};
+    this.editSelectedIds.clear();
   }
 
-  // --------- ELIMINAR ---------
+  // ========= ELIMINAR =========
+
   onDeleteButton() {
     if (!this.deleteMode) {
       this.deleteMode = true;
@@ -290,28 +329,59 @@ export class InventoryPages implements OnInit {
       return;
     }
 
-    const count = this.selectedIds.size;
-    const msg = count === 1
-      ? '¿Seguro que deseas eliminar el producto seleccionado?'
-      : `¿Seguro que deseas eliminar ${count} productos?`;
+    // abrimos modal de confirmación
+    this.showConfirmDelete = true;
+  }
+  
 
-    if (!confirm(msg)) return;
+  async confirmDelete() {
+    if (this.selectedIds.size === 0) {
+      this.showConfirmDelete = false;
+      this.deleteMode = false;
+      return;
+    }
 
     this.loading = true;
     const ids = Array.from(this.selectedIds);
+    let errors = 0;
 
-    Promise.all(ids.map(id => this.productsSvc.deleteProduct(id).toPromise()))
-      .then(() => {
-        this.loading = false;
-        this.deleteMode = false;
-        this.selectedIds.clear();
-        this.load();
-      })
-      .catch(err => {
-        console.error(err);
-        this.loading = false;
-        alert('Error al eliminar productos.');
-      });
+    try {
+      // eliminamos uno por uno usando deleteProduct (el que ya existe en el service)
+      for (const id of ids) {
+        try {
+          await this.productsSvc.deleteProduct(id).toPromise();
+        } catch (e) {
+          console.error(e);
+          errors++;
+        }
+      }
+
+      this.loading = false;
+      this.showConfirmDelete = false;
+      this.deleteMode = false;
+      this.selectedIds.clear();
+
+      if (errors > 0) {
+        alert('Error al eliminar algunos productos.');
+      }
+
+      this.load();
+    } catch (err) {
+      console.error(err);
+      this.loading = false;
+      this.showConfirmDelete = false;
+      alert('Error al eliminar productos.');
+    }
+  }
+
+  get deleteButtonLabel(): string {
+    if (!this.deleteMode) {
+      return 'Eliminar productos';
+    }
+    if (this.selectedIds.size === 0) {
+      return 'Cancelar eliminación';
+    }
+    return 'Confirmar eliminación';
   }
 
   isSelected(id: string): boolean {
