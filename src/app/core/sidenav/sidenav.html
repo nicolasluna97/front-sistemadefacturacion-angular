@@ -57,28 +57,35 @@
     </div>
 
     <div class="button-section-2">
-        <h1 class="title">Gestión de Contactos</h1>
-    
-    <button class="sidenav-button">
+    <h1 class="title">Gestión de Contactos</h1>
+
+    <button class="sidenav-button"
+            routerLink="/clientes"
+            routerLinkActive="active-b"
+            [routerLinkActiveOptions]="{ exact: true }">
         <span class="material-symbols-outlined">
-        group
+            group
         </span>
         <span>Clientes</span>
     </button>
-    
-    <button class="sidenav-button">
+
+    <button class="sidenav-button"
+            routerLink="/proveedores"
+            routerLinkActive="active-b"
+            [routerLinkActiveOptions]="{ exact: true }">
         <span class="material-symbols-outlined">
-        delivery_truck_speed
+            delivery_truck_speed
         </span>
-        <span>Proveedores</span>        
-    </button>
-              
-    <button class="sidenav-button">
-        <span class="material-symbols-outlined">
-        quick_reference_all
-        </span>
-        <span>Póliticas de Sevicio</span>
+        <span>Proveedores</span>
     </button>
 
-    </div>
+    <button class="sidenav-button"
+            routerLink="/politicas"
+            routerLinkActive="active-b"
+            [routerLinkActiveOptions]="{ exact: true }">
+        <span class="material-symbols-outlined">
+            quick_reference_all
+        </span>
+        <span>Póliticas de Servicio</span>
+    </button>
 </div>

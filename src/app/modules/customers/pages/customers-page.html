@@ -1,0 +1,128 @@
+<app-navbar></app-navbar>
+<app-sidenav></app-sidenav>
+
+<div class="page-content">
+  <h1 class="page-title">Gestión de clientes</h1>
+
+  <div *ngIf="loadError" class="alert alert-danger">
+    {{ loadError }}
+  </div>
+
+  <!-- NUEVO CLIENTE -->
+  <div class="card">
+    <div class="card-header">Nuevo cliente</div>
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="customer-form">
+
+          <!-- Nombre -->
+          <div class="form-field">
+            <label>Nombre del cliente</label>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Nombre del cliente"
+              [formControl]="nameCtrl"
+              [class.invalid]="nameCtrl.touched && nameCtrl.invalid"
+            />
+
+            <div class="field-error" *ngIf="nameCtrl.touched && nameCtrl.errors">
+              <span *ngIf="nameCtrl.errors['required']">El nombre es obligatorio.</span>
+              <span *ngIf="nameCtrl.errors['minlength']">Mínimo 2 caracteres.</span>
+              <span *ngIf="nameCtrl.errors['maxlength']">Máximo 30 caracteres.</span>
+            </div>
+          </div>
+
+          <!-- Empresa -->
+          <div class="form-field">
+            <label>Empresa</label>
+            <input
+              type="text"
+              formControlName="companyName"
+              class="text-input"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="form-field">
+            <label>Email</label>
+            <input
+              type="email"
+              formControlName="email"
+              class="text-input"
+            />
+            <div class="field-error" *ngIf="emailCtrl.touched && emailCtrl.errors?.['email']">
+              El email no tiene un formato válido.
+            </div>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="form-field">
+            <label>Teléfono</label>
+            <input
+              type="text"
+              formControlName="phone"
+              class="text-input"
+            />
+          </div>
+
+          <!-- Dirección -->
+          <div class="form-field">
+            <label>Dirección</label>
+            <input
+              type="text"
+              formControlName="address"
+              class="text-input"
+            />
+          </div>
+
+          <div *ngIf="saveError" class="alert alert-danger mt-2">
+            {{ saveError }}
+          </div>
+
+          <div class="actions-row">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="saveLoading || form.invalid"
+            >
+              {{ saveLoading ? 'Guardando...' : 'Crear cliente' }}
+            </button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LISTA DE CLIENTES -->
+  <div class="card">
+    <div class="card-header">Lista de clientes</div>
+    <div class="card-body">
+      <table class="table" *ngIf="customers().length; else noClientsTpl">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Empresa</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of customers()">
+            <td>{{ c.name }}</td>
+            <td>{{ c.companyName || '-' }}</td>
+            <td>{{ c.email || '-' }}</td>
+            <td>{{ c.phone || '-' }}</td>
+            <td>{{ c.address || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noClientsTpl>
+        <p>No hay clientes cargados todavía.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>

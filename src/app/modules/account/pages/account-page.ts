@@ -126,7 +126,7 @@ export class AccountPage implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.minLength(2),
-          Validators.maxLength(80),
+          Validators.maxLength(20),
         ],
       ],
     });
