@@ -2,6 +2,9 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+
 import { Navbar } from 'src/app/core/navbar/navbar';
 import { Sidenav } from 'src/app/core/sidenav/sidenav';
 
@@ -36,11 +39,12 @@ interface SaleLine {
   selector: 'app-sales',
   templateUrl: './sales.component.html',
   styleUrls: ['./sales.component.css'],
-  imports: [CommonModule, Navbar, Sidenav],
+  imports: [CommonModule, Navbar, Sidenav, RouterModule],
 })
 export class SalesComponent implements OnInit {
   private productsSvc = inject(ProductsService);
   private customersSvc = inject(CustomersService);
+  private router = inject(Router);
 
   step = signal<Step>('customer');
 
@@ -262,65 +266,79 @@ export class SalesComponent implements OnInit {
     this.step.set('configure');
   }
 
-    confirmSale() {
-    // 1) Validación: no vender sin cliente
-    if (!this.selectedCustomer()) {
-      this.customerError.set(true);
-      this.step.set('customer');
-      return;
-    }
-
-    // 2) Validación: cantidades > 0
-    const invalid = this.lines().some(l => l.quantity <= 0);
-    if (invalid) {
-      this.quantityError.set(true);
-      this.step.set('configure');
-      return;
-    }
-
-    this.quantityError.set(false);
-    this.saleError.set(null);
-
-    // 3) Requests para descontar stock (una por producto)
-    const requests = this.lines().map(line =>
-      this.productsSvc.decreaseStock(line.productId, line.quantity),
-    );
-
-    // 4) Ejecutar todo
-    forkJoin(requests).subscribe({
-      next: () => {
-        // (opcional) refrescar productos para que inventario muestre stock actualizado
-        this.loadProducts();
-
-        this.step.set('done');
-      },
-      error: (err) => {
-        const msg =
-          err?.error?.message ||
-          err?.message ||
-          'No se pudo registrar la venta.';
-
-        this.saleError.set(String(msg));
-        // te quedás en resumen para reintentar
-        this.step.set('summary');
-      }
-    });
+confirmSale() {
+  // 1) Validación: no vender sin cliente
+  if (!this.selectedCustomer()) {
+    this.customerError.set(true);
+    this.step.set('customer');
+    return;
   }
 
+  // 2) Validación: cantidades > 0
+  const invalid = this.lines().some(l => l.quantity <= 0);
+  if (invalid) {
+    this.quantityError.set(true);
+    this.step.set('configure');
+    return;
+  }
 
-  cancelSale() {
-  const ok = confirm('¿Deseas cancelar esta venta?');
-  if (!ok) return;
+  this.quantityError.set(false);
+  this.saleError.set(null);
 
+  // 3) Requests para descontar stock (una por producto)
+  const requests = this.lines().map(line =>
+    this.productsSvc.decreaseStock(line.productId, line.quantity),
+  );
+
+  // 4) Ejecutar todo
+  forkJoin(requests).subscribe({
+    next: () => {
+      // refrescar productos (por si volvés a la selección)
+      this.loadProducts();
+
+      // marcar finalizado
+      this.step.set('done');
+    },
+    error: (err) => {
+      const msg =
+        err?.error?.message ||
+        err?.message ||
+        'No se pudo registrar la venta.';
+
+      this.saleError.set(String(msg));
+      this.step.set('summary');
+    }
+  });
+}
+
+newSale() {
+  // Reiniciar todo SIN confirmación
   this.selectedCustomer.set(null);
   this.selectedIds.set(new Set());
   this.lines.set([]);
   this.noStockError.set(null);
   this.quantityError.set(false);
   this.saleError.set(null);
-  this.customersError.set(null);
   this.customerError.set(false);
 
+  // Volver al primer paso
   this.step.set('customer');
+
+  // (opcional) recargar listas
+  this.loadCustomers();
+  this.loadProducts();
+}
+
+cancelSale() {
+  // Si ya estás en "done", no tiene sentido preguntar "cancelar"
+  if (this.step() === 'done') {
+    this.newSale();
+    return;
+  }
+
+  const ok = confirm('¿Deseas cancelar esta venta?');
+  if (!ok) return;
+
+  this.newSale();
   }
 }
