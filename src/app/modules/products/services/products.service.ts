@@ -30,9 +30,9 @@ export class ProductsService {
 
   constructor(private http: HttpClient) {}
 
- getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>('/api/products');
-}
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.apiUrl);
+  }
 
   getProduct(id: string): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
@@ -44,6 +44,11 @@ export class ProductsService {
 
   updateProduct(id: string, productData: any): Observable<Product> {
     return this.http.patch<Product>(`${this.apiUrl}/${id}`, productData);
+  }
+
+  decreaseStock(productId: string, quantity: number): Observable<Product> {
+  return this.http.patch<Product>(`${this.apiUrl}/${productId}/decrease-stock`, {
+    quantity,});
   }
 
   deleteProduct(id: string): Observable<void> {

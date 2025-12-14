@@ -1,6 +1,287 @@
 <app-navbar></app-navbar>
 <app-sidenav></app-sidenav>
 
-<div class="prueba-v">
-    <h1>VENTAS AQUÍ</h1>
+<div class="page-content">
+  <h1 class="page-title">Registrar venta</h1>
+
+  <div *ngIf="loadError()" class="alert alert-danger">
+    {{ loadError() }}
+  </div>
+
+  <!-- PASO 1: SELECCIONAR PRODUCTOS -->
+  <div *ngIf="step() === 'customer'">
+  <h2>1. Seleccione el cliente</h2>
+
+  <p *ngIf="loadingCustomers()">Cargando clientes...</p>
+
+  <div *ngIf="customersError()" class="alert alert-danger">
+    {{ customersError() }}
+  </div>
+
+  <table class="table" *ngIf="!loadingCustomers() && customers().length">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let c of customers()">
+        <td>{{ c.name }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm" (click)="selectCustomer(c)">
+            Seleccionar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loadingCustomers() && !customers().length">
+    No hay clientes cargados.
+  </p>
+</div>
+
+  <ng-container *ngIf="step() === 'select'">
+    <div class="card">
+      <div class="card-header d-flex-between">
+        <span>1. Seleccioná los productos</span>
+        <button
+          class="btn btn-primary"
+          type="button"
+          [disabled]="!canGoToConfigure()"
+          (click)="goToConfigure()"
+        >
+          Aceptar selección
+        </button>
+      </div>
+      <div class="card-body">
+        <p *ngIf="loadingProducts()">Cargando productos...</p>
+        <p *ngIf="!loadingProducts() && !products().length">
+          Todavía no hay productos cargados.
+        </p>
+        <div *ngIf="noStockError()" class="error-box">
+          {{ noStockError() }}
+        </div>
+
+        <table class="table" *ngIf="products().length">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Nombre</th>
+              <th>Stock</th>
+              <th>Precio 1</th>
+              <th>Precio 2</th>
+              <th>Precio 3</th>
+              <th>Precio 4</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products()">
+              <td>
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(p.id)"
+                  (change)="toggleSelect(p)"
+                />
+              </td>
+              <td>{{ p.title }}</td>
+              <td [class.no-stock]="p.stock <= 0">
+                {{ p.stock }}
+              </td>
+              <!-- OJO: acá va p.price, no p.price1 -->
+              <td>{{ p.price | number:'1.0-2' }}</td>
+              <td>{{ p.price2 | number:'1.0-2' }}</td>
+              <td>{{ p.price3 | number:'1.0-2' }}</td>
+              <td>{{ p.price4 | number:'1.0-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- PASO 2: CONFIGURAR LÍNEAS -->
+  <ng-container *ngIf="step() === 'configure'">
+    <div class="card">
+      <div class="card-header d-flex-between">
+        <span>2. Configurá cantidades y precios</span>
+        <div class="header-actions">
+          <button class="btn btn-light" type="button" (click)="goBackToSelect()">
+            Volver a selección
+          </button>
+          <button
+            class="btn btn-primary"
+            type="button"
+            [disabled]="!canGoToSummary()"
+            (click)="goToSummary()"
+          >
+            Continuar
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body" *ngIf="lines().length">
+        <div *ngIf="quantityError()" class="error-box">
+        Para continuar, todos los productos deben tener una cantidad mayor a 0.
+      </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Stock disp.</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of lines(); let i = index">
+              <td>{{ line.name }}</td>
+              <td>{{ line.stockAvailable }}</td>
+              <td>
+                <div class="qty-control">
+                  <button
+                    type="button"
+                    class="btn btn-light btn-sm"
+                    (click)="adjustQuantity(i, -1)"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    [value]="line.quantity"
+                    (input)="changeQuantity(i, $any($event.target).value)"
+                    min="0"
+                    [max]="line.stockAvailable"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-light btn-sm"
+                    (click)="adjustQuantity(i, +1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </td>
+              <td>
+                <select
+                  class="price-select"
+                  [value]="line.selectedPriceKey"
+                  (change)="changePriceKey(i, $any($event.target).value)"
+                >
+                  <option value="price1">
+                    Precio 1 ({{ line.price1 | number:'1.0-2' }})
+                  </option>
+                  <option value="price2">
+                    Precio 2 ({{ line.price2 | number:'1.0-2' }})
+                  </option>
+                  <option value="price3">
+                    Precio 3 ({{ line.price3 | number:'1.0-2' }})
+                  </option>
+                  <option value="price4">
+                    Precio 4 ({{ line.price4 | number:'1.0-2' }})
+                  </option>
+                </select>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  (click)="removeLine(i)"
+                >
+                  🗑
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="hint">
+          Para continuar, todos los productos deben tener una cantidad mayor a 0.
+        </p>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- PASO 3: RESUMEN -->
+  <ng-container *ngIf="step() === 'summary'">
+    <div class="card">
+      <div class="card-header d-flex-between">
+        <span>3. Resumen de la venta</span>
+        <div class="header-actions">
+          <button
+            class="btn btn-light"
+            type="button"
+            (click)="goBackToConfigure()"
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio unitario</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of lines()">
+              <td>{{ line.name }}</td>
+              <td>{{ line.quantity }}</td>
+              <td>{{ getLineUnitPrice(line) | number:'1.0-2' }}</td>
+              <td>{{ getLineTotal(line) | number:'1.0-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="saleError()" class="alert alert-danger">
+        {{ saleError() }}
+        </div>
+
+        <div class="summary-total">
+          Total a pagar: <strong>{{ total() | number:'1.0-2' }}</strong>
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-secondary" type="button" (click)="cancelSale()">
+            Cancelar
+          </button>
+          <button class="btn btn-success" type="button" (click)="confirmSale()">
+            Vender
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- PASO 4: VENTA REALIZADA -->
+  <ng-container *ngIf="step() === 'done'">
+    <div class="card">
+      <div class="card-body sale-done">
+        <div class="big-check">✓</div>
+        <h2>Venta registrada</h2>
+        <p>
+          Vendiste un total de {{ lines().length }} producto(s) por
+          {{ total() | number:'1.0-2' }}.
+        </p>
+        <p>Puedes ir al Inicio o registrar una nueva venta.</p>
+
+        <div class="summary-actions">
+          <button class="btn btn-primary" routerLink="/inicio">
+            Ir al inicio
+          </button>
+          <button class="btn btn-light" type="button" (click)="cancelSale()">
+            Nueva venta
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>
