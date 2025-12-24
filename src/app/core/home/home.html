@@ -2,10 +2,9 @@
 <app-sidenav></app-sidenav>
 
 <div class="page-content">
-  <h1 class="page-title">Esta página web es un control de stock interno, beta 1.0.
-  </h1>
-  <h2>Cada usuario que se logue tiene para su propio negocio su inventario, sus clientes, sus ventas, sus movimientos y sus estadísticas</h2>
-  <h4>Si no quiere loguearse, puede en estas pestañas, encontrar como actua cada función.</h4>
+  <h1 class="page-title">!Bienvenido! Esta página web es un control de stock interno, beta 1.0.</h1>
+  <h2>Cada usuario que se logue tiene para su propio negocio de su inventario, sus clientes, sus ventas, sus movimientos y sus estadísticas.</h2>
+  <h4>Si no quiere loguearse, puede usar estas pestañas y encontrar como actua cada función.</h4>
 
   <!-- GRID 4 arriba + 4 abajo -->
   <div class="tabs-grid">
@@ -50,79 +49,96 @@
     </button>
   </div>
 
-  <!-- PANEL (el que te “faltaba”) -->
-  <div class="tab-panel" [class.is-open]="activeTab !== null">
-    <!-- Cuando hay pestaña activa -->
-    <div class="tab-panel-inner" *ngIf="activeTab !== null">
+  <!-- ✅ PANEL: solo existe cuando hay una pestaña activa -->
+  <div class="tab-panel" *ngIf="activeTab !== null">
+    <div class="tab-panel-inner">
       <div class="panel-body">
         <div class="panel-head">
           <h3 class="panel-section-title">{{ tabSubtitle(activeTab!) }}</h3>
-          <div class="panel-chip">{{ tabLabel(activeTab!) }}</div>
+
+          <div class="panel-actions">
+            <div class="panel-chip">{{ tabLabel(activeTab!) }}</div>
+
+            <!-- ✅ Cruz para cerrar -->
+            <button
+              type="button"
+              class="panel-close"
+              aria-label="Cerrar panel"
+              (click)="closePanel()"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <!-- LOGUEARSE -->
         <ng-container *ngIf="activeTab === 'login'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('login') }}</strong>.
+            Login y registro de usuarios con verificación de email, se mantiene la sesión abierta através de las cookies.
           </p>
         </ng-container>
 
         <!-- CONTROL DE STOCK -->
         <ng-container *ngIf="activeTab === 'stock'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('stock') }}</strong>.
+            Carga de miles de productos, simple, sencillo y con muchísimos precios, alguno para minoristas, mayoristas, particulares, etc.
           </p>
         </ng-container>
 
         <!-- CLIENTES -->
         <ng-container *ngIf="activeTab === 'customers'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('customers') }}</strong>.
+            Carga de clientes y guardado en la nube de sus datos para siempre tenerlos.
           </p>
         </ng-container>
 
         <!-- ESTADÍSTICAS -->
         <ng-container *ngIf="activeTab === 'stats'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('stats') }}</strong>.
+            Las diferentes estadísticas de tu local, cuantas ventas y que plata se genero por día, semana, mes y hora. Mostrados en un gráfico de barras.
           </p>
         </ng-container>
 
         <!-- VENTAS -->
         <ng-container *ngIf="activeTab === 'sales'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('sales') }}</strong>.
+            Luego de haber generado los clientes que tengo, poder venderles mis articulos y estas ventas sean guardadas en los movimientos.
           </p>
         </ng-container>
 
         <!-- MOVIMIENTOS -->
         <ng-container *ngIf="activeTab === 'movements'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('movements') }}</strong>.
+            Movimientos en tiempo real sobre las ventas realizadas, con el precio que se le asigno, a que cliente se le vendio y cuando fue.
           </p>
         </ng-container>
 
         <!-- PROVEEDORES -->
         <ng-container *ngIf="activeTab === 'suppliers'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('suppliers') }}</strong>.
+            En un futuro, tener una lista actualizada de cada proovedor, con sus datos de contactos y los productos en venta.
           </p>
         </ng-container>
 
         <!-- SUSCRIPCIONES -->
         <ng-container *ngIf="activeTab === 'subs'">
           <p class="panel-text">
-            Acá va la explicación de <strong>{{ tabLabel('subs') }}</strong>.
+            Suscripciones pagas para diferentes niveles de usuarios y funcionalidades.
           </p>
         </ng-container>
       </div>
     </div>
-
-    <!-- Cuando NO hay pestaña activa -->
-    <div class="tab-panel-inner" *ngIf="activeTab === null">
-      <div class="panel-empty">Seleccioná una pestaña para ver la descripción.</div>
-    </div>
   </div>
-
-  <h1>hola</h1>
+  <br>
+  <br>
+  <br>
+  <h3>
+    En la siguiente versión se pueden seguir agregando más funcionalidades como:
+    - Porcentaje de ganancia (Diferencia entre precio de compra y venta)
+    - Módulo de facturación automatica (Facturas A, B, C y envio por emails)
+    - Avisos de sotck bajo o agotado con alertas por email.
+    - Backup en la nube automatico cada cierto tiempo
+    - Integración con otros sistemas (Ej: MercadoLibre, Andreani para enviós, etc.)
+    - Reportes por usuarios / vendedores, cantidad de ventas, problemas con clientes, etc.
+  </h3>
 </div>

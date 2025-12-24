@@ -22,11 +22,16 @@ type HomeTab =
   styleUrls: ['./home.css'],
 })
 export class HomeComponent {
-  activeTab: HomeTab = 'login'; // por defecto
+  // ✅ Por defecto: todo cerrado
+  activeTab: HomeTab = null;
 
   selectTab(tab: Exclude<HomeTab, null>) {
-    // click al activo = lo cierra (si no querés esto, borrá el ternario)
+    // click al mismo tab: lo cierra
     this.activeTab = this.activeTab === tab ? null : tab;
+  }
+
+  closePanel() {
+    this.activeTab = null;
   }
 
   tabLabel(tab: Exclude<HomeTab, null>): string {
