@@ -1,91 +1,89 @@
 <div class="sidenav-container">
-    <div class="button-section-1">
-        <button class="sidenav-button" 
-        routerLink="/"
-        routerLinkActive="active-b"
-        [routerLinkActiveOptions]="{exact: true}">
-        <span class="material-symbols-outlined">
-        home
-        </span>
-        <span class="btn-text">Inicio</span>
-    </button>
+  <div class="nav-section">
+    <a
+      class="sidenav-link"
+      routerLink="/"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="../../../assets/icons/home.svg" alt="Inicio" />
+      <span class="btn-text">Inicio</span>
+    </a>
 
-    <button class= "sidenav-button" 
-        routerLink="/ventas"
-        routerLinkActive="active-b"
-        [routerLinkActiveOptions]="{exact: true}">
-        <span class="material-symbols-outlined">
-        shoppingmode
-        </span>
-        <span>
-            Vender
-        </span>
-    </button>
+    <a
+      class="sidenav-link"
+      routerLink="/ventas"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/sales.svg" alt="" />
+      <span class="btn-text">Vender</span>
+    </a>
 
-    <button class= "sidenav-button" 
-        routerLink="/inventario" 
-        routerLinkActive="active-b"
-        [routerLinkActiveOptions]="{exact: true}"> 
-        <span class="material-symbols-outlined">
-        inventory_2</span>
-        <span>Inventario</span>
-    </button>
-    
-    <button class= "sidenav-button"
-        routerLink="/movimientos"
-        routerLinkActive="active-b"
-        [routerLinkActiveOptions]="{exact: true}"> 
-        <span class="material-symbols-outlined">
-        history
-        </span>
-        <span>Movimientos</span>
-    </button>
-    
-    <button class= "sidenav-button"
-        routerLink="/estadisticas"
-        routerLinkActive="active-b"
-        [routerLinkActiveOptions]="{exact: true}">
-        <span class="material-symbols-outlined">
-        bar_chart
-        </span>
-        <span>
-        Estadisticas
-        </span>
-    </button>
+    <a
+      class="sidenav-link"
+      routerLink="/inventario"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/inventory.svg" alt="" />
+      <span class="btn-text">Inventario</span>
+    </a>
 
+    <a
+      class="sidenav-link"
+      routerLink="/movimientos"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/movements.svg" alt="" />
+      <span class="btn-text">Movimientos</span>
+    </a>
 
-    </div>
+    <a
+      class="sidenav-link"
+      routerLink="/estadisticas"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/stadistics.svg" alt="" />
+      <span class="btn-text">Estadísticas</span>
+    </a>
+  </div>
 
-    <div class="button-section-2">
-    <h1 class="title">Gestión de Contactos</h1>
+  <div class="divider"></div>
 
-    <button class="sidenav-button"
-            routerLink="/clientes"
-            routerLinkActive="active-b"
-            [routerLinkActiveOptions]="{ exact: true }">
-        <span class="material-symbols-outlined">
-            group
-        </span>
-        <span>Clientes</span>
-    </button>
+  <div class="nav-title">Gestión de Contactos</div>
 
-    <button class="sidenav-button"
-            routerLink="/proveedores"
-            routerLinkActive="active-b"
-            [routerLinkActiveOptions]="{ exact: true }">
-        <span class="material-symbols-outlined">
-            delivery_truck_speed
-        </span>
-        <span>Proveedores</span>
-    </button>
+  <div class="nav-section">
+    <a
+      class="sidenav-link"
+      routerLink="/clientes"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/customers.svg" alt="" />
+      <span class="btn-text">Clientes</span>
+    </a>
 
-    <button class="sidenav-button"
-            routerLink="/politicas"
-            routerLinkActive="active-b"
-            [routerLinkActiveOptions]="{ exact: true }">
-        <span class="material-symbols-outlined">
-            quick_reference_all
-        </span>
-        <span>Póliticas de Servicio</span>
-    </button>
+    <a
+      class="sidenav-link"
+      routerLink="/proveedores"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/suppliers.svg" alt="" />
+      <span class="btn-text">Proveedores</span>
+    </a>
+
+    <a
+      class="sidenav-link"
+      routerLink="/politicas"
+      routerLinkActive="active-b"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <img class="side-ico" src="assets/icons/policy.svg" alt="" />
+      <span class="btn-text">Políticas de Servicio</span>
+    </a>
+  </div>
 </div>

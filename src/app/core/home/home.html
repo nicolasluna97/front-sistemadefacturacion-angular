@@ -1,5 +1,128 @@
 <app-navbar></app-navbar>
 <app-sidenav></app-sidenav>
-<div class="home">
-    <h1>HOME</h1>
+
+<div class="page-content">
+  <h1 class="page-title">Esta página web es un control de stock interno, beta 1.0.
+  </h1>
+  <h2>Cada usuario que se logue tiene para su propio negocio su inventario, sus clientes, sus ventas, sus movimientos y sus estadísticas</h2>
+  <h4>Si no quiere loguearse, puede en estas pestañas, encontrar como actua cada función.</h4>
+
+  <!-- GRID 4 arriba + 4 abajo -->
+  <div class="tabs-grid">
+    <button class="tab-card" [class.active]="activeTab === 'login'" (click)="selectTab('login')" type="button">
+      <div class="tab-title">{{ tabLabel('login') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('login') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'stock'" (click)="selectTab('stock')" type="button">
+      <div class="tab-title">{{ tabLabel('stock') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('stock') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'customers'" (click)="selectTab('customers')" type="button">
+      <div class="tab-title">{{ tabLabel('customers') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('customers') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'stats'" (click)="selectTab('stats')" type="button">
+      <div class="tab-title">{{ tabLabel('stats') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('stats') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'sales'" (click)="selectTab('sales')" type="button">
+      <div class="tab-title">{{ tabLabel('sales') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('sales') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'movements'" (click)="selectTab('movements')" type="button">
+      <div class="tab-title">{{ tabLabel('movements') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('movements') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'suppliers'" (click)="selectTab('suppliers')" type="button">
+      <div class="tab-title">{{ tabLabel('suppliers') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('suppliers') }}</div>
+    </button>
+
+    <button class="tab-card" [class.active]="activeTab === 'subs'" (click)="selectTab('subs')" type="button">
+      <div class="tab-title">{{ tabLabel('subs') }}</div>
+      <div class="tab-sub">{{ tabSubtitle('subs') }}</div>
+    </button>
+  </div>
+
+  <!-- PANEL (el que te “faltaba”) -->
+  <div class="tab-panel" [class.is-open]="activeTab !== null">
+    <!-- Cuando hay pestaña activa -->
+    <div class="tab-panel-inner" *ngIf="activeTab !== null">
+      <div class="panel-body">
+        <div class="panel-head">
+          <h3 class="panel-section-title">{{ tabSubtitle(activeTab!) }}</h3>
+          <div class="panel-chip">{{ tabLabel(activeTab!) }}</div>
+        </div>
+
+        <!-- LOGUEARSE -->
+        <ng-container *ngIf="activeTab === 'login'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('login') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- CONTROL DE STOCK -->
+        <ng-container *ngIf="activeTab === 'stock'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('stock') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- CLIENTES -->
+        <ng-container *ngIf="activeTab === 'customers'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('customers') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- ESTADÍSTICAS -->
+        <ng-container *ngIf="activeTab === 'stats'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('stats') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- VENTAS -->
+        <ng-container *ngIf="activeTab === 'sales'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('sales') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- MOVIMIENTOS -->
+        <ng-container *ngIf="activeTab === 'movements'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('movements') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- PROVEEDORES -->
+        <ng-container *ngIf="activeTab === 'suppliers'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('suppliers') }}</strong>.
+          </p>
+        </ng-container>
+
+        <!-- SUSCRIPCIONES -->
+        <ng-container *ngIf="activeTab === 'subs'">
+          <p class="panel-text">
+            Acá va la explicación de <strong>{{ tabLabel('subs') }}</strong>.
+          </p>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Cuando NO hay pestaña activa -->
+    <div class="tab-panel-inner" *ngIf="activeTab === null">
+      <div class="panel-empty">Seleccioná una pestaña para ver la descripción.</div>
+    </div>
+  </div>
+
+  <h1>hola</h1>
 </div>

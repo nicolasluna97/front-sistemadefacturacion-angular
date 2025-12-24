@@ -1,51 +1,56 @@
 <div class="navbar-container">
-
   <div class="nav-left">
-    <!-- (por ahora vacío, está bien así) -->
   </div>
 
   <div class="nav-right">
-
     <!-- Botón Ingresar -->
-    <button *ngIf="!isAuthenticated"
-            class="login-btn"
-            type="button"
-            (click)="gotoLogin()">
+    <button
+      *ngIf="!isAuthenticated"
+      class="login-btn"
+      type="button"
+      (click)="gotoLogin()"
+    >
       Ingresar
     </button>
 
     <!-- Botón avatar -->
-    <button *ngIf="isAuthenticated"
-            class="button-navbar"
-            type="button"
-            (click)="toggleMenu()"
-            aria-haspopup="menu"
-            [attr.aria-expanded]="menuOpen">
-      <span class="material-symbols-outlined">account_circle</span>
+    <button
+      *ngIf="isAuthenticated"
+      class="icon-btn"
+      type="button"
+      (click)="toggleMenu()"
+      aria-haspopup="menu"
+      [attr.aria-expanded]="menuOpen"
+      title="Cuenta"
+    >
+      <img class="nav-ico" src="assets/icons/account.svg" alt="Cuenta" />
     </button>
 
     <!-- Menú desplegable -->
     <div *ngIf="menuOpen" class="menu" role="menu">
-      <button class="menu-item"
-              type="button"
-              (click)="gotoAccount(); menuOpen=false">
-        <span class="material-symbols-outlined icon">person</span>
+      <button
+        class="menu-item"
+        type="button"
+        (click)="gotoAccount(); menuOpen=false"
+      >
+        <img class="nav-ico" src="assets/icons/account.svg" alt="" />
         Cuenta
       </button>
 
-      <button class="menu-item"
-              type="button"
-              (click)="gotoHelp(); menuOpen=false">
-        <span class="material-symbols-outlined icon">help</span>
+      <button
+        class="menu-item"
+        type="button"
+        (click)="gotoHelp(); menuOpen=false"
+      >
+        <!-- Si querés usar tu icono de help, cambiá el src por tu archivo real -->
+        <img class="nav-ico" src="assets/icons/badge-question.svg" alt="" />
         Ayuda
       </button>
 
-      <hr>
+      <hr />
 
-      <button class="menu-item danger"
-              type="button"
-              (click)="logout()">
-        <span class="material-symbols-outlined icon danger">logout</span>
+      <button class="menu-item danger" type="button" (click)="logout()">
+        <img class="nav-ico" src="assets/icons/log-out.svg" alt="" />
         Salir
       </button>
     </div>

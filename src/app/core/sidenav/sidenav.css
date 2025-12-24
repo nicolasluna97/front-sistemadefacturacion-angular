@@ -1,89 +1,91 @@
 .sidenav-container {
-  font-family: Arial;
-  background-color: #fbfbfb;
+  width: var(--side-w);
+  height: calc(100vh - var(--nav-h));
 
-  width: 200px;
   position: fixed;
   left: 0;
-  top: 50px; /* igual al height del navbar */
+  top: var(--nav-h);
 
-  height: calc(100vh - 50px);
-  overflow-y: auto;    /* CLAVE: scroll interno */
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+
+  padding: 12px 10px;
+
+  overflow-y: auto;
   overflow-x: hidden;
 
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  transition: width 0.3s ease;
+  /* Importante: NO se contrae, NO cambia de ancho */
 }
 
-/* Responsive: achica el sidenav en pantallas chicas */
-@media (max-width: 768px) {
-  .sidenav-container {
-    width: 150px;
-  }
-
-  .sidenav-container .btn-text {
-    display: none;
-  }
+/* Secciones */
+.nav-section {
+  padding: 6px 6px 10px;
 }
 
-.button-section-1 {
-  margin-top: 20px; /* antes 40px: reduce para que no “coma” alto */
+.nav-title {
+  margin: 12px 10px 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.2px;
 }
 
-.button-section-2 {
-  margin-top: 30px; /* antes 125px: esto era el que más te rompía */
-}
-
-.sidenav-button {
-  font-family: Bahnschrift;
-  font-weight: 600;
-  font-size: 1.2rem;
-  font-optical-sizing: 100;
-  letter-spacing: 0.4px;
-
-  color: #222;
+/* Link botón */
+.sidenav-link {
+  width: 100%;
   display: flex;
   align-items: center;
+  gap: 10px;
 
-  width: 100%;
-  margin: 2px;
-  text-align: left;
+  padding: 10px 12px;
+  margin: 4px 0;
 
-  padding: 16px 18px; /* un poco menos para que entre mejor con escalado */
-  background: none;
-  border: none;
-  cursor: pointer;
+  border-radius: 12px;
   text-decoration: none;
-  transition: background-color 0.2s ease;
-  gap: 5px;
+
+  color: var(--text);
+  font-weight: 750;
+
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.sidenav-button:hover {
-  background-color: #d4f1ff;
+.sidenav-link:hover {
+  background: var(--hover);
+  transform: translateY(-1px);
 }
 
-.sidenav-button:active {
-  background-color: #73f1ff;
-  transform: scale(0.99); /* menos “salto” visual */
+.sidenav-link.active-b {
+  background: var(--primary-weak);
+  color: var(--text);
+  border: 1px solid rgba(37, 99, 235, 0.18);
 }
 
-.sidenav-button.active-b {
-  background-color: #a0f5ff;
-  font-weight: bold;
+body.theme-dark .sidenav-link.active-b {
+  border-color: rgba(96, 165, 250, 0.25);
 }
 
-.sidenav-button .btn-icon {
-  margin-right: 10px;
-  font-size: 20px;
+/* Ícono SVG */
+.side-ico {
+  width: 20px;
+  height: 20px;
+  display: block;
+  opacity: 0.92;
 }
 
-.sidenav-button .btn-text {
-  word-break: break-word;
+/* Ajuste texto */
+.btn-text {
+  line-height: 1.15;
 }
 
-.title {
-  font-weight: 520;
-  font-size: 1.2rem;
-  margin: 10px 2px 20px 17px;
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 8px;
+}
+
+/* Responsive: en pantallas chicas ocultamos el texto (opcional) */
+@media (max-width: 768px) {
+  .btn-text { display: none; }
+  .sidenav-link { justify-content: center; }
 }

@@ -1,7 +1,131 @@
-.home {
-font-family:  Calibri;
-font-weight: 600;
-font-size: 40px;
-margin: 20px 20px 10px 250px;
+/* home.css */
+
+/* Grilla 4x2 */
+.tabs-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 10px;
 }
 
+/* Responsive */
+@media (max-width: 1100px){
+  .tabs-grid{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+}
+@media (max-width: 680px){
+  .tabs-grid{ grid-template-columns: 1fr; }
+}
+
+/* Card pestaña */
+.tab-card{
+  text-align: left;
+  width: 100%;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.tab-card:hover{
+  transform: translateY(-1px);
+  background: var(--surface-2);
+}
+
+.tab-card.active{
+  border-color: rgba(37, 99, 235, 0.30);
+  background: var(--primary-weak);
+}
+
+.tab-title{
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: .2px;
+  color: var(--text);
+}
+
+.tab-sub{
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* Panel inferior (la “pestaña hermosa”) */
+.tab-panel{
+  margin-top: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+
+  /* animación suave al aparecer */
+  overflow: hidden;
+}
+
+/* Inner con padding */
+.tab-panel-inner{
+  padding: 16px 18px;
+  animation: panelIn .18s ease both;
+  min-height: 120px; /* vos pediste mínimo 100px */
+}
+
+@keyframes panelIn{
+  from{
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header del panel */
+.panel-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-section-title{
+  margin: 0;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.panel-chip{
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  color: var(--text);
+}
+
+/* Texto del panel */
+.panel-text{
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Estado vacío */
+.panel-empty{
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 13px;
+}

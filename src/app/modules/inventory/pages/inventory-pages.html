@@ -2,33 +2,37 @@
 <app-sidenav></app-sidenav>
 
 <div class="page-content">
-  <div class="inventory-wrapper">
+  <h1 class="page-title">Inventario</h1>
 
-    <!-- Barra de botones -->
-    <div class="toolbar">
-      <button class="btn btn-add"
-              (click)="openAddForm()"
-              [disabled]="loading">
-        + Agregar un producto
-      </button>
+  <div class="card" style="padding: 14px 16px; margin-bottom: 14px;">
+    <!-- Toolbar -->
+    <div class="filters-row">
+      <div class="filters-left">
+        <button class="btn btn-add"
+                (click)="openAddForm()"
+                [disabled]="loading">
+          + Agregar un producto
+        </button>
 
-      <button class="btn btn-edit"
-              (click)="onEditButton()"
-              [disabled]="loading || deleteMode || products.length === 0">
-        {{ editMode ? 'Guardar cambios' : '🔄 Actualizar productos' }}
-      </button>
+        <button class="btn btn-edit"
+                (click)="onEditButton()"
+                [disabled]="loading || deleteMode || products.length === 0">
+          {{ editMode ? 'Guardar cambios' : 'Actualizar productos' }}
+        </button>
 
-      <button class="btn btn-delete"
-        (click)="onDeleteButton()"
-        [disabled]="loading || editMode || products.length === 0">
-        {{ deleteButtonLabel }}
-      </button>
+        <button class="btn btn-delete"
+                (click)="onDeleteButton()"
+                [disabled]="loading || editMode || products.length === 0">
+          {{ deleteButtonLabel }}
+        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- Tabla -->
-    <div class="table-container" *ngIf="!loading; else loadingTpl">
-
-      <table class="inventory-table">
+  <!-- Tabla -->
+  <div class="card" *ngIf="!loading; else loadingTpl">
+    <div class="table-wrap">
+      <table class="table">
         <thead>
           <tr>
             <th *ngIf="editMode || deleteMode" class="col-select"></th>
@@ -44,8 +48,7 @@
         <tbody>
           <!-- Sin productos -->
           <tr *ngIf="products.length === 0">
-            <td [attr.colspan]="(editMode || deleteMode) ? 7 : 6"
-                class="empty-cell">
+            <td [attr.colspan]="(editMode || deleteMode) ? 7 : 6" class="muted" style="padding: 18px;">
               Todavía no hay productos cargados.
             </td>
           </tr>
@@ -56,13 +59,11 @@
             <!-- Checkbox de selección (para editar o eliminar) -->
             <td *ngIf="editMode || deleteMode" class="col-select">
               <ng-container *ngIf="deleteMode; else editCheckbox">
-                <!-- selección para eliminar -->
                 <input type="checkbox"
                        [checked]="isSelected(p.id)"
                        (change)="toggleSelected(p.id, $event.target.checked)" />
               </ng-container>
               <ng-template #editCheckbox>
-                <!-- selección para editar -->
                 <input type="checkbox"
                        [checked]="isEditSelected(p.id)"
                        (change)="toggleEditSelected(p.id, $event.target.checked)" />
@@ -74,14 +75,13 @@
               <ng-container *ngIf="editMode && isEditSelected(p.id); else nameRead">
                 <input type="text"
                        [(ngModel)]="editedProducts[i].title"
-                       class="cell-input"
                        [class.input-error]="editedErrors[p.id]?.title" />
                 <div class="error-message" *ngIf="editedErrors[p.id]?.title">
                   {{ editedErrors[p.id]?.title }}
                 </div>
               </ng-container>
               <ng-template #nameRead>
-                {{ p.title }}
+                <strong>{{ p.title }}</strong>
               </ng-template>
             </td>
 
@@ -91,7 +91,6 @@
                 <input type="number"
                        min="0"
                        [(ngModel)]="editedProducts[i].stock"
-                       class="cell-input number"
                        [class.input-error]="editedErrors[p.id]?.stock" />
                 <div class="error-message" *ngIf="editedErrors[p.id]?.stock">
                   {{ editedErrors[p.id]?.stock }}
@@ -109,7 +108,6 @@
                        min="0"
                        step="0.01"
                        [(ngModel)]="editedProducts[i].price"
-                       class="cell-input number"
                        [class.input-error]="editedErrors[p.id]?.price" />
                 <div class="error-message" *ngIf="editedErrors[p.id]?.price">
                   {{ editedErrors[p.id]?.price }}
@@ -127,7 +125,6 @@
                        min="0"
                        step="0.01"
                        [(ngModel)]="editedProducts[i].price2"
-                       class="cell-input number"
                        [class.input-error]="editedErrors[p.id]?.price2" />
                 <div class="error-message" *ngIf="editedErrors[p.id]?.price2">
                   {{ editedErrors[p.id]?.price2 }}
@@ -145,7 +142,6 @@
                        min="0"
                        step="0.01"
                        [(ngModel)]="editedProducts[i].price3"
-                       class="cell-input number"
                        [class.input-error]="editedErrors[p.id]?.price3" />
                 <div class="error-message" *ngIf="editedErrors[p.id]?.price3">
                   {{ editedErrors[p.id]?.price3 }}
@@ -163,7 +159,6 @@
                        min="0"
                        step="0.01"
                        [(ngModel)]="editedProducts[i].price4"
-                       class="cell-input number"
                        [class.input-error]="editedErrors[p.id]?.price4" />
                 <div class="error-message" *ngIf="editedErrors[p.id]?.price4">
                   {{ editedErrors[p.id]?.price4 }}
@@ -176,21 +171,21 @@
           </tr>
         </tbody>
       </table>
-
-      <!-- Cancelar edición -->
-      <div class="edit-actions" *ngIf="editMode">
-        <button class="btn btn-cancel"
-                (click)="cancelEdit()"
-                [disabled]="loading">
-          Cancelar cambios
-        </button>
-      </div>
     </div>
 
-    <ng-template #loadingTpl>
-      <div class="loading-text">Cargando inventario...</div>
-    </ng-template>
+    <!-- Cancelar edición -->
+    <div style="padding: 12px 14px;" *ngIf="editMode">
+      <button class="btn btn-cancel"
+              (click)="cancelEdit()"
+              [disabled]="loading">
+        Cancelar cambios
+      </button>
+    </div>
   </div>
+
+  <ng-template #loadingTpl>
+    <div class="muted">Cargando inventario...</div>
+  </ng-template>
 </div>
 
 <!-- MODAL PARA AGREGAR PRODUCTO -->

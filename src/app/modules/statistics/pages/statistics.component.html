@@ -1,62 +1,69 @@
 <app-navbar></app-navbar>
 <app-sidenav></app-sidenav>
 
-<div class="stats-page">
+<div class="page-content">
   <h1 class="page-title">Estadísticas</h1>
 
-  <div class="filters">
-    <label>
-      Ver:
-      <select [value]="mode()" (change)="onChangeMode($any($event.target).value)">
-        <option value="day">Por día</option>
-        <option value="week">Por semana</option>
-        <option value="month">Por mes</option>
-        <option value="year">Por año</option>
-      </select>
-    </label>
+  <!-- Filtros (card tipo Movimientos) -->
+  <div class="card" style="padding: 14px 16px; margin-bottom: 14px;">
+    <div class="filters-row">
+      <div class="filters-left">
+        <label style="font-weight: 800; font-size: 13px;">Ver</label>
 
-    <label *ngIf="mode() === 'day'">
-      Día:
-      <input type="date" [value]="dayInput()" (change)="onChangeDay($any($event.target).value)" />
-    </label>
+        <select
+          [value]="mode()"
+          (change)="onChangeMode($any($event.target).value)"
+        >
+          <option value="day">Por día</option>
+          <option value="week">Por semana</option>
+          <option value="month">Por mes</option>
+          <option value="year">Por año</option>
+        </select>
 
-    <label *ngIf="mode() === 'week'">
-      Semana:
-      <input type="date" [value]="weekAnchorInput()" (change)="onChangeWeekAnchor($any($event.target).value)" />
-    </label>
+        <ng-container *ngIf="mode() === 'day'">
+          <label style="font-weight: 800; font-size: 13px;">Día</label>
+          <input type="date" [value]="dayInput()" (change)="onChangeDay($any($event.target).value)" />
+        </ng-container>
 
-    <label *ngIf="mode() === 'month'">
-      Mes:
-      <input type="month" [value]="monthInput()" (change)="onChangeMonth($any($event.target).value)" />
-    </label>
+        <ng-container *ngIf="mode() === 'week'">
+          <label style="font-weight: 800; font-size: 13px;">Semana</label>
+          <input type="date" [value]="weekAnchorInput()" (change)="onChangeWeekAnchor($any($event.target).value)" />
+        </ng-container>
 
-    <label *ngIf="mode() === 'year'">
-      Año:
-      <select [value]="year()" (change)="onChangeYear($any($event.target).value)">
-        <option *ngFor="let y of yearsList()" [value]="y">{{ y }}</option>
-      </select>
-    </label>
-  </div>
+        <ng-container *ngIf="mode() === 'month'">
+          <label style="font-weight: 800; font-size: 13px;">Mes</label>
+          <input type="month" [value]="monthInput()" (change)="onChangeMonth($any($event.target).value)" />
+        </ng-container>
 
-  <div *ngIf="loading()" style="margin: 10px 0;">
-    Cargando estadísticas...
-  </div>
-
-  <div *ngIf="errorMsg()" style="margin: 10px 0; color: #b00020;">
-    {{ errorMsg() }}
-  </div>
-
-  <div class="kpi">
-    <div class="kpi-box">
-      <div class="kpi-label">Cantidad de ventas</div>
-      <div class="kpi-value">
-        {{ totalAmount() | number:'1.0-0' }}$
-        <span class="kpi-sub">| {{ totalCount() }} ventas totales</span>
+        <ng-container *ngIf="mode() === 'year'">
+          <label style="font-weight: 800; font-size: 13px;">Año</label>
+          <select [value]="year()" (change)="onChangeYear($any($event.target).value)">
+            <option *ngFor="let y of yearsList()" [value]="y">{{ y }}</option>
+          </select>
+        </ng-container>
       </div>
+    </div>
+
+    <div *ngIf="loading()" style="margin-top: 10px;" class="muted">
+      Cargando estadísticas...
+    </div>
+
+    <div *ngIf="errorMsg()" style="margin-top: 10px;" class="alert alert-danger">
+      {{ errorMsg() }}
     </div>
   </div>
 
-  <div class="chart-card" style="height: 340px;">
+  <!-- KPI -->
+  <div class="kpi-box" style="margin-bottom: 14px;">
+    <div class="kpi-label">Cantidad de ventas</div>
+    <div class="kpi-value">
+      {{ totalAmount() | number:'1.0-0' }}$
+      <span class="kpi-sub">| {{ totalCount() }} ventas totales</span>
+    </div>
+  </div>
+
+  <!-- Chart card -->
+  <div class="card" style="padding: 12px; height: 360px;">
     <canvas #chartCanvas></canvas>
   </div>
 </div>

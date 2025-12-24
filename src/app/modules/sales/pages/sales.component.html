@@ -8,9 +8,9 @@
     {{ loadError() }}
   </div>
 
-  <!-- PASO 1: SELECCIONAR PRODUCTOS -->
-  <div *ngIf="step() === 'customer'">
-  <h2>1. Seleccione el cliente</h2>
+<!-- PASO 1: SELECCIONAR CLIENTE -->
+<div *ngIf="step() === 'customer'">
+  <h2 class="section-title">1. Seleccione el cliente</h2>
 
   <p *ngIf="loadingCustomers()">Cargando clientes...</p>
 
@@ -28,7 +28,9 @@
 
     <tbody>
       <tr *ngFor="let c of customers()">
-        <td>{{ c.name }}</td>
+        <td>
+          <strong class="customer-name">{{ c.name }}</strong>
+        </td>
         <td>
           <button class="btn btn-primary btn-sm" (click)="selectCustomer(c)">
             Seleccionar

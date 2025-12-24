@@ -1,12 +1,6 @@
 .navbar-container {
-  background-color: rgb(135, 231, 255);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  height: 50px;
+  height: var(--nav-h);
   width: 100%;
-  padding: 0 8px;
 
   position: fixed;
   top: 0;
@@ -15,9 +9,19 @@
 
   z-index: 1000;
 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 600;
-  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 14px;
+
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+body.theme-dark .navbar-container {
+  background: rgba(15, 23, 42, 0.72);
 }
 
 .nav-left {
@@ -26,123 +30,118 @@
   gap: 10px;
 }
 
+.brand {
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: var(--text);
+}
+
 .nav-right {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.brand {
-  text-decoration: none;
-  font-weight: 700;
-  color: #0b0b0b;
-}
-
-.button-navbar {
-  background-color: transparent;
-  border: none;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  cursor: pointer;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  border-radius: 50%;
-  transition: background 0.2s ease;
-}
-
-.button-navbar:hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.material-symbols-outlined {
-  font-size: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
+  gap: 10px;
 }
 
 .login-btn {
-  background: #fff;
-  border: 1px solid #cbd5e1;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 5px 12px;
-  font-weight: 600;
+  padding: 8px 12px;
+  font-weight: 700;
   cursor: pointer;
-  color: #1e293b;
-  font-family: inherit;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  color: var(--text);
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .login-btn:hover {
-  background: #f1f5f9;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  background: var(--surface-2);
+  transform: translateY(-1px);
 }
 
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--surface-2);
+  transform: translateY(-1px);
+}
+
+.nav-ico {
+  width: 20px;
+  height: 20px;
+  display: block;
+  opacity: 0.92;
+}
+
+/* Dropdown */
 .menu {
   position: absolute;
   right: 0;
-  top: 48px;
-  min-width: 210px;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  padding: 6px;
+  top: calc(var(--nav-h) - 6px);
+
+  min-width: 220px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: 0.9rem;
+  gap: 4px;
 }
 
 .menu hr {
-  border: none;
-  border-top: 1px solid #e2e8f0;
+  border: 0;
+  border-top: 1px solid var(--border);
   margin: 6px 0;
 }
 
 .menu-item {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #1e293b;
+  gap: 10px;
+
+  padding: 10px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+
   background: transparent;
   border: 0;
   text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 500;
-  transition: background 0.2s ease, color 0.2s ease;
+
+  font-weight: 700;
+  color: var(--text);
+
+  transition: background 0.15s ease;
 }
 
 .menu-item:hover {
-  background: #f1f5f9;
+  background: var(--hover);
 }
 
-.icon {
-  font-size: 20px;
-  color: #475569;
+.menu-item .nav-ico {
+  width: 18px;
+  height: 18px;
 }
 
 .menu-item.danger {
   color: #dc2626;
-  font-weight: 600;
 }
 
 .menu-item.danger:hover {
-  background: #fef2f2;
-}
-
-.icon.danger {
-  color: #dc2626;
+  background: rgba(220, 38, 38, 0.10);
 }
