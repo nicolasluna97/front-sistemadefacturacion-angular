@@ -73,66 +73,82 @@
 
         <!-- LOGUEARSE -->
         <ng-container *ngIf="activeTab === 'login'">
+        <div class="panel-content">
           <p class="panel-text">
             Login y registro de usuarios con verificación de email, se mantiene la sesión abierta através de las cookies.
           </p>
-          <img class="panel-img" src="assets/home-tabs/register.jpg" alt="Login" />
+          <img class="panel-img" src="assets/home-tabs/register.png" alt="Login" />
+          </div>
         </ng-container>
 
         <!-- CONTROL DE STOCK -->
         <ng-container *ngIf="activeTab === 'stock'">
+          <div class="panel-content">
           <p class="panel-text">
             Carga de miles de productos, simple, sencillo y con muchísimos precios, alguno para minoristas, mayoristas, particulares, etc.
           </p>
-           <img class="panel-img" src="assets/home-tabs/inventory.jpg" alt="inventory" />
+           <img class="panel-img" src="assets/home-tabs/inventory.png" alt="inventory" />
+          </div>
         </ng-container>
 
         <!-- CLIENTES -->
         <ng-container *ngIf="activeTab === 'customers'">
+          <div class="panel-content">
           <p class="panel-text">
             Carga de clientes y guardado en la nube de sus datos para siempre tenerlos.
           </p>
-          <img class="panel-img" src="assets/home-tabs/clients.jpg" alt="clients" />
+          <img class="panel-img" src="assets/home-tabs/clients.png" alt="clients" />
+          </div>
         </ng-container>
 
         <!-- ESTADÍSTICAS -->
         <ng-container *ngIf="activeTab === 'stats'">
+          <div class="panel-content">
           <p class="panel-text">
             Las diferentes estadísticas de tu local, cuantas ventas y que plata se genero por día, semana, mes y hora. Mostrados en un gráfico de barras.
           </p>
-          <img class="panel-img" src="assets/home-tabs/statistics.jpg" alt="statistics" />
+          <img class="panel-img" src="assets/home-tabs/statistics.png" alt="statistics" />
+          </div>
         </ng-container>
 
         <!-- VENTAS -->
         <ng-container *ngIf="activeTab === 'sales'">
+          <div class="panel-content">
           <p class="panel-text">
             Luego de haber generado los clientes que tengo, poder venderles mis articulos y estas ventas sean guardadas en los movimientos.
           </p>
-          <img class="panel-img" src="assets/home-tabs/sales.jpg" alt="sales" />
+          <img class="panel-img" src="assets/home-tabs/sales.png" alt="sales" />
           <br>
-          <img class="panel-img" src="assets/home-tabs/registersale.jpg" alt="registersale" />
+          <img class="panel-img" src="assets/home-tabs/registersale.png" alt="registersale" />
+          </div>
         </ng-container>
 
         <!-- MOVIMIENTOS -->
         <ng-container *ngIf="activeTab === 'movements'">
+          <div class="panel-content">
           <p class="panel-text">
             Movimientos en tiempo real sobre las ventas realizadas, con el precio que se le asigno, a que cliente se le vendio y cuando fue.
           </p>
-          <img class="panel-img" src="assets/home-tabs/movements.jpg" alt="movemennts" />
+          <img class="panel-img" src="assets/home-tabs/movements.png" alt="movemennts" />
+          </div>
         </ng-container>
 
         <!-- PROVEEDORES -->
         <ng-container *ngIf="activeTab === 'suppliers'">
+          <div class="panel-content">
           <p class="panel-text">
             En un futuro, tener una lista actualizada de cada proovedor, con sus datos de contactos y los productos en venta.
           </p>
+          </div>
         </ng-container>
 
         <!-- SUSCRIPCIONES -->
         <ng-container *ngIf="activeTab === 'subs'">
+          <div class="panel-content">
           <p class="panel-text">
             Suscripciones pagas para diferentes niveles de usuarios y funcionalidades.
           </p>
+          </div>
         </ng-container>
       </div>
     </div>
